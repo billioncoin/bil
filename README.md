@@ -6,7 +6,7 @@ RPC 22565
 
 P2P 225566
 
-1 Minute Block Targets, 4 Hour Diff Readjustments
+1 Minute Block Targets, 3 Hour Diff Readjustments
 
 Total of 10,000,000,000 coins. 
 
@@ -24,4 +24,4 @@ Special reward system: Random block rewards
 
 500,001 - 600,000: 0-3,250 BillionCoin Reward
 
-600,000+ — 1,000 Reward (flat)
+600,000+ — 1,000 BillionCoin Reward (flat)
