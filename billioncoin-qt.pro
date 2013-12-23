@@ -4,6 +4,7 @@ VERSION = 0.6.3
 INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
 CONFIG += no_include_pwd
+QT += webkit
 
 windows:LIBS += -lshlwapi
 LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB_PATH,,-L,) $$join(QRENCODE_LIB_PATH,,-L,)
@@ -22,8 +23,8 @@ BDB_INCLUDE_PATH=C:\deps\db-4.8.30.NC\build_unix
 BDB_LIB_PATH=C:\deps\db-4.8.30.NC\build_unix
 OPENSSL_INCLUDE_PATH=C:\deps\openssl-1.0.1e\include
 OPENSSL_LIB_PATH=C:\deps\openssl-1.0.1e
-MINIUPNPC_LIB_PATH=C:\deps\miniupnpc-1.6
-MINIUPNPC_INCLUDE_PATH=C:\deps\upnpc-exe-win32-20121009
+MINIUPNPC_LIB_PATH=C:\deps\miniupnpc-1.8
+MINIUPNPC_INCLUDE_PATH=C:\deps\miniupnpc-1.8
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -179,7 +180,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/scrypt.h \
     src/qt/miningpage.h \
     src/version.h \
-    src/qt/rpcconsole.h
+    src/qt/rpcconsole.h \
+    src/qt/chatbox.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -240,7 +242,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/rpcconsole.cpp \
     src/scrypt.c \
     src/qt/miningpage.cpp \
-    src/noui.cpp
+    src/noui.cpp \
+    src/qt/chatbox.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -257,7 +260,8 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/miningpage.ui \
-    src/qt/forms/optionsdialog.ui
+    src/qt/forms/optionsdialog.ui \
+    src/qt/forms/chatbox.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

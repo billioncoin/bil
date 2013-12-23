@@ -28,6 +28,7 @@
 #include "notificator.h"
 #include "guiutil.h"
 #include "rpcconsole.h"
+#include "chatbox.h"
 
 #ifdef Q_WS_MAC
 #include "macdockiconhandler.h"
@@ -118,6 +119,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     receiveCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab);
 
     sendCoinsPage = new SendCoinsDialog(this);
+    chatBox = new ChatBox(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
@@ -128,6 +130,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralWidget->addWidget(addressBookPage);
     centralWidget->addWidget(receiveCoinsPage);
     centralWidget->addWidget(sendCoinsPage);
+    centralWidget->addWidget(chatBox);
 #ifdef FIRST_CLASS_MESSAGING
     centralWidget->addWidget(signVerifyMessageDialog);
 #endif
@@ -186,7 +189,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     // Clicking on "Sign Message" in the Much receive page sends you to the sign message tab
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
 
-    gotoOverviewPage();
+    //gotoOverviewPage();
+    showHome();
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -224,6 +228,12 @@ void BitcoinGUI::createActions()
     addressBookAction->setCheckable(true);
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
+
+    //chat box
+    billionCoin = new QAction(QIcon(":/icons/export"), tr("&BillionCoin..."), this);
+    billionCoin->setToolTip(tr("BillionCoin"));
+    billionCoin->setCheckable(true);
+    tabGroup->addAction(billionCoin);
 
     receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
     receiveCoinsAction->setToolTip(tr("Show the list of addresses for receiving payments"));
@@ -267,6 +277,8 @@ void BitcoinGUI::createActions()
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
+    connect(billionCoin, SIGNAL(triggered()), this, SLOT(showHome()));
+
 #ifdef FIRST_CLASS_MESSAGING
     connect(firstClassMessagingAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     // Always start with the sign message tab for FIRST_CLASS_MESSAGING
@@ -348,6 +360,7 @@ void BitcoinGUI::createToolBars()
 {
     QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
     toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolbar->addAction(billionCoin);
     toolbar->addAction(overviewAction);
     toolbar->addAction(sendCoinsAction);
     toolbar->addAction(receiveCoinsAction);
@@ -939,6 +952,13 @@ void BitcoinGUI::unlockWallet()
         dlg.setModel(walletModel);
         dlg.exec();
     }
+}
+
+
+void BitcoinGUI::showHome()
+{
+    billionCoin->setChecked(true);
+    centralWidget->setCurrentWidget(chatBox);
 }
 
 void BitcoinGUI::showNormalIfMinimized(bool fToggleHidden)

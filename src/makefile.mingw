@@ -2,7 +2,7 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
-USE_UPNP:=0
+USE_UPNP=1
 
 BOOST_SUFFIX?=-mgw46-mt-sd-1_53
 
@@ -11,13 +11,13 @@ INCLUDEPATHS= \
  -I"C:\deps\boost_1_53_0" \
  -I"C:\deps\db-4.8.30.NC\build_unix" \
  -I"C:\deps\openssl-1.0.1e\include"\
- -I"C:\deps\miniupnpc-1.6"
+ -I"C:\deps\miniupnpc-1.8"
 
 LIBPATHS= \
  -L"C:\deps\boost_1_53_0\stage\lib" \
  -L"C:\deps\db-4.8.30.NC\build_unix" \
  -L"C:\deps\openssl-1.0.1e"\
- -L"C:\deps\upnpc-exe-win32-20121009"
+ -L"C:\deps\miniupnpc-1.8"
 
 LIBS= \
  -l boost_system-mgw46-mt-sd-1_53 \
@@ -36,7 +36,7 @@ CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-par
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
 ifdef USE_UPNP
- LIBPATHS += -L"C:\upnpc-exe-win32"
+ LIBPATHS += -L"C:\deps\miniupnpc-1.8"
  LIBS += -l miniupnpc -l iphlpapi
  DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
 endif
