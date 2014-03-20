@@ -1,10 +1,13 @@
 TEMPLATE = app
-TARGET =
+TARGET = BillionCoin-Qt
 VERSION = 0.6.3
 INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
 CONFIG += no_include_pwd
+CONFIG += thread
 QT += webkit
+QT += widgets
+QT += webkitwidgets
 
 windows:LIBS += -lshlwapi
 LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB_PATH,,-L,) $$join(QRENCODE_LIB_PATH,,-L,)
@@ -25,6 +28,23 @@ OPENSSL_INCLUDE_PATH=C:\deps\openssl-1.0.1e\include
 OPENSSL_LIB_PATH=C:\deps\openssl-1.0.1e
 MINIUPNPC_LIB_PATH=C:\deps\miniupnpc-1.8
 MINIUPNPC_INCLUDE_PATH=C:\deps\miniupnpc-1.8
+
+macx {
+  LIBS += -lboost_system -lboost_filesystem -lboost_program_options -lboost_thread
+
+  BOOST_LIB_SUFFIX =-mt
+  BOOST_THREAD_LIB_SUFFIX =-mt
+  BOOST_INCLUDE_PATH=/opt/local/include
+  BOOST_LIB_PATH=/opt/local/lib
+  BDB_INCLUDE_PATH=/opt/local/include/db48
+  BDB_LIB_PATH=/opt/local/lib/db48
+  BDB_LIB_SUFFIX = -4.8
+  OPENSSL_INCLUDE_PATH=/usr/include/openssl
+  OPENSSL_LIB_PATH=/usr/lib
+  MINIUPNPC_LIB_PATH=/opt/local/include/miniupnpc
+  MINIUPNPC_INCLUDE_PATH=/opt/local/lib
+  USE_QRCODE=1
+}
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -301,7 +321,10 @@ QMAKE_EXTRA_COMPILERS += TSQM
 # "Other files" to show in Qt Creator
 OTHER_FILES += \
     contrib/gitian-descriptors/* doc/*.rst doc/*.txt doc/README README.md res/bitcoin-qt.rc \
-    share/setup.nsi
+    share/setup.nsi \
+    src/qt/res/makedmg.sh \
+    src/qt/res/setdmg.scpt \
+    src/qt/res/images/dmg_bg.png
 
 # platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
@@ -358,7 +381,7 @@ macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
 macx:ICON = src/qt/res/icons/bitcoin.icns
-macx:TARGET = "billioncoin-qt"
+macx:TARGET = "BillionCoin-Qt"
 
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
 INCLUDEPATH += $$BOOST_INCLUDE_PATH $$BDB_INCLUDE_PATH $$OPENSSL_INCLUDE_PATH $$QRENCODE_INCLUDE_PATH
@@ -377,4 +400,15 @@ contains(RELEASE, 1) {
 
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
 
+mac {
+    LIBS += -ldb_cxx$$BDB_LIB_SUFFIX
 
+    # Bundle OSX dependencies
+    QMAKE_POST_LINK += macdeployqt "$$OUT_PWD/BillionCoin-Qt.app";
+    QMAKE_POST_LINK += cp /opt/local/lib/db48/libdb_cxx-4.8.dylib "$$OUT_PWD/BillionCoin-Qt.app/Contents/Frameworks/libdb_cxx-4.8.dylib";
+    QMAKE_POST_LINK += install_name_tool -change /opt/local/lib/db48/libdb_cxx-4.8.dylib @executable_path/../Frameworks/libdb_cxx-4.8.dylib "$$OUT_PWD/BillionCoin-Qt.app/Contents/MacOS/BillionCoin-Qt";
+    QMAKE_POST_LINK += install_name_tool -id @executable_path/../Frameworks/libdb_cxx-4.8.dylib "$$OUT_PWD/BillionCoin-Qt.app/Contents/Frameworks/libdb_cxx-4.8.dylib";
+
+    # Create DMG file
+    QMAKE_POST_LINK += $$PWD/src/qt/res/makedmg.sh "$$PWD" "$$OUT_PWD"
+}
