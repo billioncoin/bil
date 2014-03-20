@@ -2,6 +2,7 @@
 #define CHATBOX_H
 
 #include <QDialog>
+#include <QWebView>
 
 namespace Ui {
 class ChatBox;

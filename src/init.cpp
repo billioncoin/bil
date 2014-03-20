@@ -76,7 +76,9 @@ void Shutdown(void* parg)
         bitdb.Flush(false);
         StopNode();
         bitdb.Flush(true);
+#ifndef MAC_OSX
         boost::filesystem::remove(GetPidFile());
+#endif
         UnregisterWallet(pwalletMain);
         delete pwalletMain;
         CreateThread(ExitTimeout, NULL);
@@ -447,7 +449,9 @@ bool AppInit2()
         }
         if (pid > 0)
         {
+#ifndef MAC_OSX
             CreatePidFile(GetPidFile(), pid);
+#endif
             return true;
         }
 
